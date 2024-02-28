@@ -1,0 +1,84 @@
+[video]
+name = "Video"
+
+[video.remux]
+name = "Remux Video Format"
+cmd = "--remux-video"
+opts = ['avi', 'flv', 'gif', 'mkv', 'mov', 'mp4', 'webm']
+opts_fancy = [
+    ".AVI  | Audio Video Interleave",
+    ".FLV  | Flash Video",
+    ".GIF  | Graphics Interchange Format (256 Colors Only)",
+    ".MKV  | Matroska Video",
+    ".MOV  | QuickTime File Format",
+    ".MP4  | MPEG-4 Part 14",
+    ".WEBM | Web Media File",
+]
+
+[video.embed_subtitles]
+name = "Embed subtitles in video (mp4/webm/mkv)"
+cmd = "--embed-subs"
+
+
+[audio]
+name = "Audio"
+cmd = "--extract-audio"
+
+[audio.format]
+name = "Audio Format"
+cmd = "--audio-format"
+opts = ['best', 'aac', 'alac', 'flac', 'm4a', 'mp3', 'opus', 'vorbis', 'wav']
+opts_fancy = [
+    "Best quality",
+    ".AAC  (Lossy)",
+    ".ALAC (Lossless)",
+    ".FLAC (Lossless)",
+    ".M4A  (Lossless) [MP4 Audio]",
+    ".MP3  (Lossy)",
+    ".OGG  (Lossy)",
+    ".OPUS (Lossy)",
+    ".WAV  (Lossless)"
+]
+default = 'best'
+
+[thumbnails]
+name = "Thumbnail options"
+
+[thumbnail.embedthumbnail]
+name = "Embed Thumbnail"
+cmd = "--embed-thumbnail"
+[thumbnail.savethumbnail]
+name = "Save Thumbnail to Disk"
+cmd = "--write-thumbnail"
+
+[shortcuts]
+name = "Internet shortcuts"
+[shortcuts.writeurllink]
+name = "Write Windows .URL shortcut link"
+cmd = "--write-url-link"
+[shortcuts.write_webloc_link]
+name = "Write macOS .WEBLOC shortcut link"
+cmd = "--write-webloc-link"
+[shortcuts.write_desktop_link]
+name = "Write Linux .DESKTOP shortcut link"
+cmd = "--write-desktop-link"
+
+[checkformat]
+name = "Check available formats"
+cmd = "--list-formats"
+
+[noplaylist]
+name = "Do not download playlist, only video"
+cmd = "--no-playlist"
+
+[output]
+name = "Filename and Output"
+cmd = "--output"
+opts = ["%(title)s.%(ext)s"]
+opts_fancy = [
+    "Video Title + (file extension)"
+]
+
+[verbose]
+name = 'Output verbose debugging info'
+cmd = "--verbose"
