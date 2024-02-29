@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QCheckBox, QMainWindow, QPushButton, QComboBox, \
     QStatusBar
-from __init__ import __version__, __author__, __license__
+import __init__
+from read_toml import read_toml
+
 
 class MainWindow(QMainWindow):
     def __init__(self, title: str = 'yt-dlp gui'):
@@ -10,33 +12,37 @@ class MainWindow(QMainWindow):
         """
         super().__init__()
         self.setWindowTitle(title)
+
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
 
         self.layout = QVBoxLayout()
         self.video_audio_layout = QVBoxLayout()
 
-        self.init_ui()
+        self.data = read_toml()
+
+        self.init_ui()  # Calls init_ui
 
         self.layout.addLayout(self.video_audio_layout)
         self.central_widget.setLayout(self.layout)
 
     def init_ui(self):
         """Initializes the UI for the MainWindow class."""
-
+        # Status bar
         status_bar = QStatusBar()
         self.setStatusBar(status_bar)
-        status_bar.showMessage(__version__)
+        status_bar.showMessage(__init__.__version__)
 
+        # Input field
         input_field = QLineEdit()
         input_field.setPlaceholderText("Enter URL here...")
-
         self.layout.addWidget(input_field)
 
+        # Options area
         video_audio_cb = QComboBox()
         video_audio_cb.addItems((
-            "Video",
-            "Audio"
+            self.data.get(['video']),
+            self.data.get(['audio'])
         ))
         video_audio_cb.setPlaceholderText('Choose video/audio')
         video_audio_cb.setCurrentIndex(-1)
@@ -47,7 +53,7 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(download_btn)
 
     def video_audio_cb(self, index):
-
+        """Handles selection of either video or audio download."""
         # Clear layout to remove existing widgets
         for i in reversed(range(self.video_audio_layout.count())):
             widget = self.video_audio_layout.itemAt(i).widget()
