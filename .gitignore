@@ -32,3 +32,10 @@ venv.bak/
 .idea/
 .vscode/
 output/
+*.log
+*.mp4
+*.mp3
+*.aac
+*.alac
+*.m4a
+*.ogg

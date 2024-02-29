@@ -6,7 +6,7 @@ LOGGING_LEVELS = {'info': logging.INFO, 'warning': logging.WARNING, 'error': log
 
 logging.basicConfig(
     filename=LOG_FILENAME,
-    level=logging.INFO,
+    level=logging.DEBUG,
     format=LOG_FORMAT
 )
 

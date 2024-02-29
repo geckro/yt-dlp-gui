@@ -2,7 +2,7 @@
 name = "Video"
 
 [video.remux]
-name = "Remux Video Format"
+name = "Remux Format"
 cmd = "--remux-video"
 opts = ['avi', 'flv', 'gif', 'mkv', 'mov', 'mp4', 'webm']
 opts_fancy = [
@@ -16,7 +16,7 @@ opts_fancy = [
 ]
 
 [video.embed_subtitles]
-name = "Embed subtitles in video (mp4/webm/mkv)"
+name = "Embed subtitles in video (mp4/webm/mkv only)"
 cmd = "--embed-subs"
 
 
