@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QCheckBox, QMainWindow, QPushButton, QComboBox, \
     QStatusBar, QHBoxLayout, QLabel
 import __init__
-from download_video import download_video
+from download_video import download_media
 from read_toml import read_toml
 
 TITLE = 'yt-dlp GUI'
@@ -19,16 +19,20 @@ class MainWindow(QMainWindow):
         self.layout = QVBoxLayout()
         self.input_download_layout = QHBoxLayout()
 
+        self.option_wrapper_layout = QHBoxLayout()
         self.option_layout = QVBoxLayout()
         self.video_audio_layout = QVBoxLayout()
+        self.shortcut_layout = QVBoxLayout()
 
         self.data = read_toml()
 
         self.init_ui()  # Calls init_ui
 
         self.option_layout.addLayout(self.video_audio_layout)
+        self.option_layout.addLayout(self.shortcut_layout)
+        self.option_wrapper_layout.addLayout(self.option_layout)
         self.layout.addLayout(self.input_download_layout)
-        self.layout.addLayout(self.option_layout)
+        self.layout.addLayout(self.option_wrapper_layout)
         self.central_widget.setLayout(self.layout)
 
     def init_ui(self) -> None:
@@ -40,19 +44,33 @@ class MainWindow(QMainWindow):
         self.setup_download_btn()
 
     def setup_status_bar(self):
-        status_bar = QStatusBar()
-        self.setStatusBar(status_bar)
+        self.status_bar = QStatusBar()
+        self.setStatusBar(self.status_bar)
         for info in STATUS_BAR_INFO:
-            status_bar.addWidget(QLabel(info))
+            self.status_bar.addWidget(QLabel(info))
 
     def setup_show_all_opts(self):
-        show_all_opts_cb = QCheckBox("Show all options")
-        self.input_download_layout.addWidget(show_all_opts_cb)
+        self.show_all_opts_cb = QCheckBox("Show all options")
+        self.status_bar.addPermanentWidget(self.show_all_opts_cb, 1)
+        self.show_all_opts_cb.clicked.connect(self.setup_shortcut_opts)
 
     def setup_input_field(self):
         self.input_field = QLineEdit()
         self.input_field.setPlaceholderText("Enter URL here...")
         self.input_download_layout.addWidget(self.input_field)
+
+    def setup_shortcut_opts(self):
+        self.remove_widget(self.shortcut_layout)
+        if self.show_all_opts_cb.isChecked():
+            shortcut_title = QLabel(self.data['shortcuts']['name'])
+            self.shortcut_layout.addWidget(shortcut_title)
+            shortcut_options = (
+                self.data['shortcuts']['writeurllink']['name'],
+                self.data['shortcuts']['write_webloc_link']['name'],
+                self.data['shortcuts']['write_desktop_link']['name']
+            )
+            for shortcut_option in shortcut_options:
+                self.shortcut_layout.addWidget(QCheckBox(shortcut_option))
 
     def setup_options_area(self):
         # Options area
@@ -74,28 +92,21 @@ class MainWindow(QMainWindow):
         self.option_layout.addWidget(embed_thumbnail_opt)
         self.option_layout.addWidget(save_thumbnail_opt)
 
-        shortcut_title = QLabel("Shortcuts")
-        self.option_layout.addWidget(shortcut_title)
-
-        write_win_link = QCheckBox(self.data['shortcuts']['writeurllink']['name'])
-        write_mac_link = QCheckBox(self.data['shortcuts']['write_webloc_link']['name'])
-        write_lin_link = QCheckBox(self.data['shortcuts']['write_desktop_link']['name'])
-        self.option_layout.addWidget(write_win_link)
-        self.option_layout.addWidget(write_mac_link)
-        self.option_layout.addWidget(write_lin_link)
-
     def check_if_video_or_audio(self, index):
         """Handles selection of either video or audio download."""
-        # Clear layout to remove existing widgets
-        for i in reversed(range(self.video_audio_layout.count())):
-            widget = self.video_audio_layout.itemAt(i).widget()
-            if widget is not None:
-                widget.setParent(None)
+        self.remove_widget(self.video_audio_layout)
 
         if index == 0:
             self.create_video_widgets()
         elif index == 1:
             self.create_audio_widgets()
+
+    @staticmethod
+    def remove_widget(layout) -> None:
+        for i in reversed(range(layout.count())):
+            widget = layout.itemAt(i).widget()
+            if widget is not None:
+                widget.setParent(None)
 
     def setup_download_btn(self):
         download_btn = QPushButton("Download")
@@ -121,6 +132,6 @@ class MainWindow(QMainWindow):
         self.video_audio_layout.addWidget(audio_format)
 
     def download_yt_video(self):
-        yt_url = download_video(self.input_field.text())
+        yt_url = download_media(self.input_field.text(), {'format': 'best'})
 
 
